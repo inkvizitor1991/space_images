@@ -1,16 +1,17 @@
 import datetime
 import os
 import pathlib
-from os.path import split
-from urllib.parse import urlsplit
+from os.path import splitext
+from urllib.parse import urlsplit, unquote
 
 import requests
 from dotenv import load_dotenv
 
 
 def get_extension(url):
-    url_path = urlsplit(url).path
-    extension = split(url_path)[1]
+    unquoted_url = unquote(url)
+    url_path = urlsplit(unquoted_url).path
+    extension = splitext(url_path)[1]
     return extension
 
 
@@ -22,7 +23,7 @@ def get_epic_links(url, token):
     return (epic_links)
 
 
-def download_epic_images(epic_links, image_folder, token):
+def download_epic_images(epic_links, image_folder, epic_name, token):
     for link_number, link in enumerate(epic_links, 1):
         image_name = link['image']
         date = link['date']
@@ -33,7 +34,7 @@ def download_epic_images(epic_links, image_folder, token):
         extension = get_extension(download_url)
         combined_filepath = os.path.join(
             image_folder,
-            extension
+            f'{epic_name}{link_number}{extension}'
         )
         download_image(combined_filepath, download_url, token)
 
@@ -49,13 +50,13 @@ def get_apod_links(url, token, download_start_date):
     return (apod_links)
 
 
-def download_apod_images(apod_links, image_folder, token):
+def download_apod_images(apod_links, image_folder, apod_name, token):
     for link_number, link in enumerate(apod_links, 1):
         image_url = link['url']
         extension = get_extension(image_url)
         combined_filepath = os.path.join(
             image_folder,
-            extension
+            f'{apod_name}{link_number}{extension}'
         )
         download_image(combined_filepath, image_url, token)
 
@@ -72,11 +73,13 @@ if __name__ == '__main__':
     load_dotenv()
     token = os.environ['SPACE_TOKEN']
     image_folder = 'images'
+    epic_name = 'epic'
+    apod_name = 'apod'
     download_start_date = '2021-07-18'
     epic_url = 'https://api.nasa.gov/EPIC/api/natural'
     apod_url = 'https://api.nasa.gov/planetary/apod'
     pathlib.Path(image_folder).mkdir(parents=True, exist_ok=True)
     epic_links = get_epic_links(epic_url, token)
     apod_links = get_apod_links(apod_url, token, download_start_date)
-    download_epic_images(epic_links, image_folder, token)
-    download_apod_images(apod_links, image_folder, token)
+    download_epic_images(epic_links, image_folder, epic_name, token)
+    download_apod_images(apod_links, image_folder, apod_name, token)
