@@ -2,10 +2,11 @@ import datetime
 import os
 import pathlib
 from os.path import splitext
-from urllib.parse import urlsplit, unquote
+from urllib.parse import unquote, urlsplit
 
 import requests
 from dotenv import load_dotenv
+from downloading_photos import download_image
 
 
 def get_extension(url):
@@ -25,6 +26,7 @@ def get_epic_links(token):
 
 
 def download_epic_images(epic_links, image_folder, epic_name, token):
+    params = {'api_key': token}
     for link_number, link in enumerate(epic_links, 1):
         image_name = link['image']
         date = link['date']
@@ -37,7 +39,8 @@ def download_epic_images(epic_links, image_folder, epic_name, token):
             image_folder,
             f'{epic_name}{link_number}{extension}'
         )
-        download_image(filepath, download_url, token)
+
+        download_image(filepath, download_url, params)
 
 
 def get_apod_links(token, download_start_date):
@@ -60,15 +63,7 @@ def download_apod_images(apod_links, image_folder, apod_name, token):
             image_folder,
             f'{apod_name}{link_number}{extension}'
         )
-        download_image(filepath, image_url, token)
-
-
-def download_image(filepath, download_url, token):
-    params = {'api_key': token}
-    download_url_response = requests.get(download_url, params=params)
-    download_url_response.raise_for_status()
-    with open(filepath, 'wb') as file:
-        file.write(download_url_response.content)
+        download_image(filepath, image_url)
 
 
 if __name__ == '__main__':

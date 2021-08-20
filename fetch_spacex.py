@@ -2,6 +2,7 @@ import os
 import pathlib
 
 import requests
+from downloading_photos import download_image
 
 
 def get_spacex_links():
@@ -19,13 +20,6 @@ def download_spacex_images(spacex_links, image_folder, filename):
             f'{filename}{link_number}.jpg'
         )
         download_image(filepath, link)
-
-
-def download_image(filepath, url):
-    response = requests.get(url)
-    response.raise_for_status()
-    with open(filepath, 'wb') as file:
-        file.write(response.content)
 
 
 if __name__ == '__main__':
