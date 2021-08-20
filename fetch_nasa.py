@@ -21,7 +21,7 @@ def get_epic_links(token):
     response = requests.get(epic_url, params=params)
     response.raise_for_status()
     epic_links = response.json()
-    return (epic_links)
+    return epic_links
 
 
 def download_epic_images(epic_links, image_folder, epic_name, token):
@@ -30,7 +30,7 @@ def download_epic_images(epic_links, image_folder, epic_name, token):
         date = link['date']
         date_time = datetime.datetime.fromisoformat(date)
         formatted_date = date_time.strftime("%Y/%m/%d")
-        download_url = f'https://api.nasa.gov/EPIC/archive/natural/' \
+        download_url = 'https://api.nasa.gov/EPIC/archive/natural/' \
                        f'{formatted_date}/png/{image_name}.png'
         extension = get_extension(download_url)
         filepath = os.path.join(
@@ -49,7 +49,7 @@ def get_apod_links(token, download_start_date):
     response = requests.get(apod_url, params=params)
     response.raise_for_status()
     apod_links = response.json()
-    return (apod_links)
+    return apod_links
 
 
 def download_apod_images(apod_links, image_folder, apod_name, token):
