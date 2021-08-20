@@ -14,17 +14,17 @@ def get_spacex_links():
 
 def download_spacex_images(spacex_links, image_folder, filename):
     for link_number, link in enumerate(spacex_links, 1):
-        combined_filepath = os.path.join(
+        filepath = os.path.join(
             image_folder,
             f'{filename}{link_number}.jpg'
         )
-        download_image(combined_filepath, link)
+        download_image(filepath, link)
 
 
-def download_image(combined_filepath, url):
+def download_image(filepath, url):
     response = requests.get(url)
     response.raise_for_status()
-    with open(combined_filepath, 'wb') as file:
+    with open(filepath, 'wb') as file:
         file.write(response.content)
 
 
