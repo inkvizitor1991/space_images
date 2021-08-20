@@ -15,9 +15,10 @@ def get_extension(url):
     return extension
 
 
-def get_epic_links(url, token):
+def get_epic_links(token):
+    epic_url = 'https://api.nasa.gov/EPIC/api/natural'
     params = {'api_key': token}
-    response = requests.get(url, params=params)
+    response = requests.get(epic_url, params=params)
     response.raise_for_status()
     epic_links = response.json()
     return (epic_links)
@@ -39,12 +40,13 @@ def download_epic_images(epic_links, image_folder, epic_name, token):
         download_image(combined_filepath, download_url, token)
 
 
-def get_apod_links(url, token, download_start_date):
+def get_apod_links(token, download_start_date):
+    apod_url = 'https://api.nasa.gov/planetary/apod'
     params = {
         'api_key': token,
         'start_date': download_start_date
     }
-    response = requests.get(url, params=params)
+    response = requests.get(apod_url, params=params)
     response.raise_for_status()
     apod_links = response.json()
     return (apod_links)
@@ -76,10 +78,9 @@ if __name__ == '__main__':
     epic_name = 'epic'
     apod_name = 'apod'
     download_start_date = '2021-07-18'
-    epic_url = 'https://api.nasa.gov/EPIC/api/natural'
-    apod_url = 'https://api.nasa.gov/planetary/apod'
+
     pathlib.Path(image_folder).mkdir(parents=True, exist_ok=True)
-    epic_links = get_epic_links(epic_url, token)
-    apod_links = get_apod_links(apod_url, token, download_start_date)
+    epic_links = get_epic_links(token)
+    apod_links = get_apod_links(token, download_start_date)
     download_epic_images(epic_links, image_folder, epic_name, token)
     download_apod_images(apod_links, image_folder, apod_name, token)
