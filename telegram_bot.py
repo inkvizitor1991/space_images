@@ -6,10 +6,10 @@ import telegram
 from dotenv import load_dotenv
 
 
-def send_images(bot, images, chat_id, timer_seconds):
+def send_images(bot, image_folder, chat_id, timer_seconds):
     while True:
-        for image in images:
-            with open(f'images/{image}', 'rb') as file:
+        for image in listdir(image_folder):
+            with open(f'{image_folder}/{image}', 'rb') as file:
                 bot.send_document(
                     chat_id=chat_id,
                     document=file
@@ -22,6 +22,6 @@ if __name__ == '__main__':
     token = os.environ['TELEGRAM_BOT_TOKEN']
     chat_id = os.environ['CHAT_ID']
     timer_seconds = 86400
-    images = listdir("images")
+    image_folder = 'images'
     bot = telegram.Bot(token=token)
-    send_images(bot, images, chat_id, timer_seconds)
+    send_images(bot, image_folder, chat_id, timer_seconds)
